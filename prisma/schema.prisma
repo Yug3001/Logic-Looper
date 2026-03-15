@@ -1,13 +1,10 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = "file:./dev.db"
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model User {
@@ -15,7 +12,7 @@ model User {
   email       String      @unique
   name        String?
   avatar      String?
-  provider    String      @default("local")  // local | google | guest
+  provider    String      @default("local") // local | google | guest
   providerId  String?
   password    String?
   streakCount Int         @default(0)
@@ -34,7 +31,7 @@ model UserStats {
   id            String  @id @default(cuid())
   userId        String  @unique
   puzzlesSolved Int     @default(0)
-  avgSolveTime  Int     @default(0)  // seconds
+  avgSolveTime  Int     @default(0) // seconds
   bestStreak    Int     @default(0)
   totalHints    Int     @default(0)
 
@@ -47,7 +44,7 @@ model DailyScore {
   date       DateTime
   score      Int
   timeTaken  Int      // seconds
-  difficulty Int      @default(1)  // 0=easy 1=medium 2=hard 3=expert
+  difficulty Int      @default(1) // 0=easy 1=medium 2=hard 3=expert
   puzzleType String   @default("matrix")
 
   createdAt  DateTime @default(now())
