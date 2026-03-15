@@ -1,0 +1,122 @@
+.streak-banner {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(236, 72, 153, 0.06));
+    border: 1px solid rgba(245, 158, 11, 0.2);
+    border-radius: var(--radius-xl);
+    padding: 20px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* Main: fire + count */
+.sb-main {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+
+.sb-fire {
+    font-size: 42px;
+    line-height: 1;
+    display: inline-block;
+    filter: drop-shadow(0 0 12px rgba(245, 158, 11, 0.6));
+}
+
+.sb-count-wrap {
+    display: flex;
+    flex-direction: column;
+}
+
+.sb-count {
+    font-size: 48px;
+    font-weight: 900;
+    line-height: 1;
+    font-family: var(--font-mono);
+    background: linear-gradient(90deg, #F59E0B, #EC4899);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.sb-count-label {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+    font-weight: 600;
+}
+
+.sb-milestone {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: var(--radius-full);
+    border: 1px solid;
+    font-size: 14px;
+    font-weight: 700;
+    margin-left: 8px;
+}
+
+/* Stats */
+.sb-stats {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.sb-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.sb-stat-val {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--text-primary);
+    font-family: var(--font-mono);
+    line-height: 1;
+}
+
+.sb-stat-label {
+    font-size: 11px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.sb-stat-divider {
+    width: 1px;
+    height: 32px;
+    background: var(--border-subtle);
+}
+
+/* Progress */
+.sb-progress-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.sb-progress-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.sb-progress-track {
+    height: 6px;
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: 99px;
+    overflow: hidden;
+}
+
+.sb-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #F59E0B, #EC4899);
+    border-radius: 99px;
+}

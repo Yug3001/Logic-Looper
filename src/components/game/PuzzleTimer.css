@@ -1,0 +1,25 @@
+.puzzle-timer {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-full);
+    padding: 7px 16px;
+    font-family: var(--font-mono);
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.timer-active {
+    border-color: rgba(16, 185, 129, 0.4);
+    color: #10B981;
+}
+
+.timer-stopped {
+    color: var(--text-muted);
+}
+
+.timer-icon {
+    font-size: 0.9rem;
+}

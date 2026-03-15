@@ -1,0 +1,135 @@
+.heatmap-wrapper {
+    position: relative;
+    width: 100%;
+    overflow-x: auto;
+}
+
+.heatmap-months {
+    display: grid;
+    margin-left: 32px;
+    margin-bottom: 4px;
+    gap: 2px;
+}
+
+.month-label {
+    font-size: 11px;
+    color: var(--text-muted);
+    white-space: nowrap;
+    text-align: left;
+}
+
+.heatmap-body {
+    display: flex;
+    gap: 6px;
+}
+
+.day-labels {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding-top: 0;
+}
+
+.day-label {
+    height: 14px;
+    font-size: 10px;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    padding-right: 4px;
+    min-width: 28px;
+}
+
+.heatmap-grid {
+    display: grid;
+    grid-auto-rows: 14px;
+    grid-auto-flow: column;
+    gap: 2px;
+}
+
+/* Week = column, day = row */
+.heatmap-grid {
+    grid-template-rows: repeat(7, 14px);
+}
+
+.heatmap-cell {
+    width: 14px;
+    height: 14px;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: transform 0.1s ease;
+    flex-shrink: 0;
+}
+
+/* Intensity Colors — Purple theme */
+.heatmap-cell.intensity-0 {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.heatmap-cell.intensity-1 {
+    background: rgba(124, 58, 237, 0.2);
+}
+
+.heatmap-cell.intensity-2 {
+    background: rgba(124, 58, 237, 0.45);
+}
+
+.heatmap-cell.intensity-3 {
+    background: rgba(124, 58, 237, 0.7);
+}
+
+.heatmap-cell.intensity-4 {
+    background: #7C3AED;
+    box-shadow: 0 0 6px rgba(124, 58, 237, 0.5);
+}
+
+/* Legend */
+.heatmap-legend {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 12px;
+    justify-content: flex-end;
+}
+
+.legend-label {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin: 0 2px;
+}
+
+.legend-cell {
+    cursor: default !important;
+}
+
+/* Tooltip */
+.heatmap-tooltip {
+    position: fixed;
+    background: var(--bg-card-hover);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    padding: 8px 12px;
+    z-index: 1000;
+    pointer-events: none;
+    box-shadow: var(--shadow-card);
+    transform: translateX(-50%);
+    white-space: nowrap;
+}
+
+.tooltip-date {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-bottom: 3px;
+}
+
+.tooltip-score {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.tooltip-score.empty {
+    color: var(--text-muted);
+    font-weight: 400;
+}

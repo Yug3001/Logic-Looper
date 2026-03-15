@@ -1,0 +1,238 @@
+.practice-view {
+    padding: 32px;
+    max-width: 900px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.practice-header {
+    margin-bottom: 32px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.practice-title {
+    font-size: 28px;
+    font-weight: 800;
+    margin: 0 0 8px 0;
+    color: var(--text-primary);
+}
+
+.practice-subtitle {
+    margin: 0;
+    color: var(--text-secondary);
+    font-size: 15px;
+}
+
+.practice-controls {
+    display: flex;
+    gap: 16px;
+    align-items: flex-end;
+    background: var(--bg-card);
+    padding: 16px;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-subtle);
+}
+
+.control-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.control-group label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.control-group select {
+    padding: 10px 14px;
+    border-radius: var(--radius-sm);
+    background: var(--bg-hover);
+    color: var(--text-primary);
+    border: 1px solid var(--border-accent);
+    font-family: inherit;
+    font-size: 14px;
+    cursor: pointer;
+    min-width: 150px;
+}
+
+.control-group select option {
+    background-color: #0d0d1a;
+    color: #ffffff;
+}
+
+.control-group select:focus {
+    outline: none;
+    border-color: var(--hm-4, #7C3AED);
+}
+
+.btn-generate {
+    padding: 10px 16px;
+    background: var(--bg-hover);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-sm);
+    color: var(--text-primary);
+    font-weight: 600;
+    cursor: pointer;
+    height: 42px;
+    transition: all 0.2s;
+}
+
+.btn-generate:hover {
+    background: var(--bg-card-hover);
+}
+
+.btn-generate.primary {
+    background: var(--hm-4, #7C3AED);
+    color: white;
+    border-color: transparent;
+}
+
+.btn-generate.primary:hover {
+    background: var(--hm-3, #6D28D9);
+}
+
+.practice-board {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    padding: 32px;
+    position: relative;
+    overflow: hidden;
+}
+
+.solved-board {
+    border-color: var(--hm-4, #7C3AED);
+    box-shadow: 0 0 30px rgba(124, 58, 237, 0.1);
+}
+
+.board-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border-subtle);
+}
+
+.board-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--text-primary);
+}
+
+.puzzle-wrapper {
+    min-height: 300px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.practice-actions {
+    display: flex;
+    justify-content: center;
+    margin-top: 32px;
+}
+
+.btn-check {
+    padding: 14px 40px;
+    border-radius: 30px;
+    background: var(--text-primary);
+    color: var(--bg-primary, #0A0A12);
+    font-size: 16px;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.btn-check:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: var(--bg-hover);
+    color: var(--text-secondary);
+}
+
+.btn-check.error-shake {
+    background: #EF4444;
+    color: white;
+    animation: shake 0.4s cubic-bezier(.36, .07, .19, .97) both;
+}
+
+@keyframes shake {
+
+    10%,
+    90% {
+        transform: translate3d(-1px, 0, 0);
+    }
+
+    20%,
+    80% {
+        transform: translate3d(2px, 0, 0);
+    }
+
+    30%,
+    50%,
+    70% {
+        transform: translate3d(-4px, 0, 0);
+    }
+
+    40%,
+    60% {
+        transform: translate3d(4px, 0, 0);
+    }
+}
+
+.practice-success-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(to top, var(--bg-secondary) 60%, rgba(20, 20, 30, 0));
+    padding: 40px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    backdrop-filter: blur(4px);
+}
+
+.practice-success-overlay h3 {
+    font-size: 24px;
+    color: var(--hm-4, #7C3AED);
+    margin: 0;
+}
+
+.practice-success-overlay p {
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+@media (max-width: 768px) {
+    .practice-controls {
+        flex-direction: column;
+        width: 100%;
+        align-items: stretch;
+    }
+
+    .control-group select {
+        width: 100%;
+    }
+
+    .btn-generate {
+        width: 100%;
+        margin-top: 8px;
+    }
+}

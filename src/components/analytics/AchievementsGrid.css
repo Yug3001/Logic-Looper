@@ -1,0 +1,241 @@
+.achievements-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+/* Summary */
+.achievements-summary {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-xl);
+    padding: 24px;
+}
+
+.ach-progress-circle {
+    position: relative;
+    flex-shrink: 0;
+}
+
+.ach-progress-num {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--text-primary);
+    font-family: var(--font-mono);
+}
+
+.ach-summary-text {
+    flex: 1;
+}
+
+.ach-count {
+    font-size: 24px;
+    font-weight: 900;
+    color: var(--text-primary);
+}
+
+.ach-count span {
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--text-muted);
+}
+
+.ach-sub {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin: 4px 0 12px;
+}
+
+.ach-category-stats {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.ach-cat-stat {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 12px;
+}
+
+.ach-cat-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+.ach-cat-name {
+    color: var(--text-muted);
+    text-transform: capitalize;
+}
+
+.ach-cat-num {
+    font-family: var(--font-mono);
+    font-weight: 700;
+    color: var(--text-secondary);
+}
+
+/* Filters */
+.ach-filters {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.ach-filter {
+    padding: 7px 16px;
+    border-radius: var(--radius-full);
+    background: var(--bg-card);
+    color: var(--text-muted);
+    font-size: 13px;
+    font-weight: 500;
+    border: 1px solid var(--border-subtle);
+    transition: all var(--transition-fast);
+    text-transform: capitalize;
+}
+
+.ach-filter:hover {
+    color: var(--text-primary);
+}
+
+.ach-filter.active {
+    background: rgba(124, 58, 237, 0.15);
+    color: var(--accent-purple-light);
+    border-color: rgba(124, 58, 237, 0.3);
+}
+
+/* Grid */
+.ach-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 16px;
+}
+
+.ach-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-xl);
+    padding: 20px;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all var(--transition-med);
+}
+
+.ach-card.unlocked {
+    border-color: color-mix(in srgb, var(--cat-color) 30%, transparent);
+}
+
+.ach-card.unlocked:hover {
+    border-color: var(--cat-color);
+    box-shadow: 0 8px 32px color-mix(in srgb, var(--cat-color) 20%, transparent);
+}
+
+.ach-card.locked {
+    opacity: 0.6;
+}
+
+.ach-icon-wrap {
+    position: relative;
+    flex-shrink: 0;
+    width: 52px;
+    height: 52px;
+    border-radius: var(--radius-md);
+    background: color-mix(in srgb, var(--cat-color) 12%, transparent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid color-mix(in srgb, var(--cat-color) 25%, transparent);
+}
+
+.ach-icon-wrap.grayscale {
+    filter: grayscale(1);
+    opacity: 0.7;
+}
+
+.ach-icon {
+    font-size: 26px;
+    z-index: 1;
+    position: relative;
+}
+
+.ach-glow {
+    position: absolute;
+    inset: 0;
+    border-radius: var(--radius-md);
+    background: var(--cat-color);
+    opacity: 0.3;
+}
+
+.ach-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.ach-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.ach-desc {
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.4;
+}
+
+.ach-footer {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 4px;
+}
+
+.ach-category-tag {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: var(--radius-full);
+    text-transform: capitalize;
+}
+
+.ach-date {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+}
+
+.ach-locked-label {
+    font-size: 11px;
+    color: var(--text-muted);
+}
+
+.ach-lock-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(10, 10, 18, 0.3);
+    pointer-events: none;
+}
+
+@media (max-width: 640px) {
+    .ach-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .achievements-summary {
+        flex-direction: column;
+    }
+}

@@ -1,0 +1,154 @@
+.perf-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.perf-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.chart-type-tabs {
+    display: flex;
+    gap: 4px;
+    background: var(--bg-secondary);
+    padding: 4px;
+    border-radius: var(--radius-md);
+}
+
+.chart-type-tab {
+    padding: 7px 14px;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--text-muted);
+    font-size: 13px;
+    font-weight: 500;
+    transition: all var(--transition-fast);
+}
+
+.chart-type-tab:hover {
+    color: var(--text-primary);
+}
+
+.chart-type-tab.active {
+    background: var(--accent-purple);
+    color: white;
+}
+
+.range-tabs {
+    display: flex;
+    gap: 4px;
+}
+
+.range-tab {
+    padding: 6px 14px;
+    border-radius: var(--radius-md);
+    background: var(--bg-card);
+    color: var(--text-muted);
+    font-size: 12px;
+    font-weight: 600;
+    font-family: var(--font-mono);
+    border: 1px solid var(--border-subtle);
+    transition: all var(--transition-fast);
+}
+
+.range-tab:hover {
+    color: var(--text-primary);
+}
+
+.range-tab.active {
+    background: rgba(124, 58, 237, 0.15);
+    color: var(--accent-purple-light);
+    border-color: rgba(124, 58, 237, 0.3);
+}
+
+.chart-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-xl);
+    padding: 24px;
+}
+
+.chart-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.chart-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.chart-subtitle {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 3px;
+}
+
+.perf-two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+/* Custom Tooltip */
+.custom-tooltip {
+    background: var(--bg-card-hover);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    padding: 12px 14px;
+    box-shadow: var(--shadow-card);
+    min-width: 140px;
+}
+
+.tooltip-label {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+    font-weight: 600;
+}
+
+.tooltip-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    padding: 2px 0;
+}
+
+.tooltip-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.tooltip-name {
+    flex: 1;
+    color: var(--text-secondary);
+}
+
+.tooltip-val {
+    font-weight: 700;
+    color: var(--text-primary);
+    font-family: var(--font-mono);
+}
+
+@media (max-width: 768px) {
+    .perf-two-col {
+        grid-template-columns: 1fr;
+    }
+
+    .perf-controls {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}

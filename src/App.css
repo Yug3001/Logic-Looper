@@ -1,0 +1,92 @@
+/* App Shell Layout */
+.app-shell {
+    display: flex;
+    min-height: 100vh;
+    background: var(--bg-primary);
+    position: relative;
+}
+
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    transition: margin-left var(--transition-med);
+    overflow: hidden;
+}
+
+.main-content.sidebar-open {
+    margin-left: 260px;
+}
+
+.main-content.sidebar-closed {
+    margin-left: 72px;
+}
+
+.page-content {
+    flex: 1;
+    padding: 24px;
+    overflow-y: auto;
+    position: relative;
+}
+
+/* Coming Soon Fallback */
+.coming-soon {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 60vh;
+    gap: 16px;
+    text-align: center;
+}
+
+.coming-soon-icon {
+    font-size: 64px;
+    animation: float 3s ease-in-out infinite;
+}
+
+.coming-soon h2 {
+    font-size: 32px;
+    font-weight: 800;
+    background: var(--gradient-hero);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.coming-soon p {
+    color: var(--text-secondary);
+    font-size: 16px;
+    max-width: 400px;
+}
+
+.btn-primary {
+    background: var(--accent-purple);
+    color: white;
+    padding: 12px 28px;
+    border-radius: var(--radius-full);
+    font-size: 15px;
+    font-weight: 600;
+    transition: all var(--transition-fast);
+    margin-top: 8px;
+}
+
+.btn-primary:hover {
+    background: var(--accent-purple-light);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px var(--accent-purple-glow);
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+
+    .main-content.sidebar-open,
+    .main-content.sidebar-closed {
+        margin-left: 0;
+    }
+
+    .page-content {
+        padding: 16px;
+    }
+}

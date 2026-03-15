@@ -1,0 +1,111 @@
+.stat-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-xl);
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+    cursor: default;
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.stat-card:hover {
+    border-color: var(--accent);
+    box-shadow: 0 8px 32px var(--accent-glow);
+}
+
+.stat-card-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 14px;
+}
+
+.stat-icon-wrap {
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-md);
+    background: var(--accent-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+}
+
+.stat-icon-emoji {
+    font-size: 22px;
+}
+
+.stat-trend {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: var(--radius-full);
+}
+
+.stat-trend.positive {
+    background: rgba(16, 185, 129, 0.12);
+    color: #10B981;
+}
+
+.stat-trend.negative {
+    background: rgba(239, 68, 68, 0.12);
+    color: #EF4444;
+}
+
+.stat-value-row {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    margin-bottom: 6px;
+}
+
+.stat-value-num {
+    font-size: clamp(24px, 3vw, 32px);
+    font-weight: 900;
+    color: var(--text-primary);
+    font-family: var(--font-mono);
+    letter-spacing: -0.02em;
+    line-height: 1;
+}
+
+.stat-unit {
+    font-size: 14px;
+    color: var(--accent);
+    font-weight: 600;
+}
+
+.stat-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.stat-title {
+    font-size: 13px;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.stat-subtitle {
+    font-size: 11px;
+    color: var(--text-muted);
+}
+
+.stat-glow-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--accent);
+    opacity: 0;
+    transition: opacity var(--transition-fast);
+}
+
+.stat-card:hover .stat-glow-bar {
+    opacity: 1;
+}

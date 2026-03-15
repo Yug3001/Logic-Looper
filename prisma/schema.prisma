@@ -1,0 +1,60 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id          String      @id @default(cuid())
+  email       String      @unique
+  name        String?
+  avatar      String?
+  provider    String      @default("local")  // local | google | guest
+  providerId  String?
+  password    String?
+  streakCount Int         @default(0)
+  lastPlayed  DateTime?
+  totalPoints Int         @default(0)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  stats       UserStats?
+  scores      DailyScore[]
+
+  @@index([email])
+}
+
+model UserStats {
+  id            String  @id @default(cuid())
+  userId        String  @unique
+  puzzlesSolved Int     @default(0)
+  avgSolveTime  Int     @default(0)  // seconds
+  bestStreak    Int     @default(0)
+  totalHints    Int     @default(0)
+
+  user          User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model DailyScore {
+  id         String   @id @default(cuid())
+  userId     String
+  date       DateTime
+  score      Int
+  timeTaken  Int      // seconds
+  difficulty Int      @default(1)  // 0=easy 1=medium 2=hard 3=expert
+  puzzleType String   @default("matrix")
+
+  createdAt  DateTime @default(now())
+
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, date])
+  @@index([date])
+  @@index([score(sort: Desc)])
+}

@@ -1,0 +1,211 @@
+.topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+    height: 64px;
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border-subtle);
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    backdrop-filter: blur(12px);
+}
+
+.topbar-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.menu-toggle {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    background: transparent;
+    padding: 6px;
+    border-radius: var(--radius-sm);
+    transition: background var(--transition-fast);
+}
+
+.menu-toggle:hover {
+    background: var(--bg-card);
+}
+
+.menu-toggle span {
+    display: block;
+    width: 20px;
+    height: 2px;
+    background: var(--text-secondary);
+    border-radius: 2px;
+    transition: all var(--transition-fast);
+}
+
+.topbar-date {
+    display: flex;
+    flex-direction: column;
+}
+
+.today-label {
+    font-size: 11px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.today-date {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.topbar-stat {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    background: var(--bg-card);
+    padding: 6px 12px;
+    border-radius: var(--radius-full);
+    border: 1px solid var(--border-subtle);
+}
+
+.stat-icon {
+    font-size: 14px;
+}
+
+.stat-value {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-primary);
+    font-family: var(--font-mono);
+}
+
+.stat-label {
+    font-size: 11px;
+    color: var(--text-muted);
+}
+
+.topbar-notif {
+    position: relative;
+    font-size: 18px;
+    cursor: pointer;
+    padding: 6px;
+    border-radius: var(--radius-sm);
+    transition: background var(--transition-fast);
+}
+
+.topbar-notif:hover {
+    background: var(--bg-card);
+}
+
+.notif-dot {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 8px;
+    height: 8px;
+    background: var(--accent-pink);
+    border-radius: 50%;
+    border: 2px solid var(--bg-secondary);
+}
+
+.topbar-avatar {
+    width: 36px;
+    height: 36px;
+    background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan));
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    color: white;
+    cursor: pointer;
+    transition: transform var(--transition-fast);
+    box-shadow: 0 0 0 2px var(--accent-purple-glow);
+}
+
+.topbar-avatar:hover {
+    transform: scale(1.05);
+}
+
+@media (max-width: 640px) {
+    .topbar-date {
+        display: none;
+    }
+
+    .topbar-stat .stat-label {
+        display: none;
+    }
+
+    .topbar {
+        padding: 0 16px;
+    }
+
+    .share-btn {
+        display: none;
+    }
+}
+
+/* Friend Challenge Share Button */
+.share-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    background: rgba(6, 182, 212, 0.1);
+    color: var(--accent-cyan);
+    border: 1px solid rgba(6, 182, 212, 0.3);
+    border-radius: var(--radius-full);
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    white-space: nowrap;
+}
+
+.share-btn:hover {
+    background: rgba(6, 182, 212, 0.2);
+    box-shadow: 0 0 12px rgba(6, 182, 212, 0.2);
+}
+
+.topbar-logout-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: rgba(239, 68, 68, 0.1);
+    color: #EF4444;
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    border-radius: var(--radius-md);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.topbar-logout-btn:hover {
+    background: rgba(239, 68, 68, 0.2);
+    border-color: rgba(239, 68, 68, 0.4);
+    transform: translateY(-1px);
+}
+
+.logout-text {
+    display: inline;
+}
+
+@media (max-width: 1024px) {
+    .logout-text {
+        display: none;
+    }
+
+    .topbar-logout-btn {
+        padding: 8px;
+    }
+}

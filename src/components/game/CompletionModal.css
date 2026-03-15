@@ -1,0 +1,106 @@
+.completion-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.completion-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-xl);
+    padding: 40px 36px;
+    max-width: 420px;
+    width: 90%;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+.completion-icon {
+    font-size: 4rem;
+    margin-bottom: 16px;
+    display: block;
+}
+
+.completion-title {
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+}
+
+.completion-score {
+    margin-bottom: 28px;
+}
+
+.score-number {
+    font-size: 3.5rem;
+    font-weight: 900;
+    background: var(--gradient-hero);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.score-label {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-top: -4px;
+}
+
+.completion-stats {
+    display: flex;
+    justify-content: center;
+    gap: 28px;
+    margin-bottom: 28px;
+}
+
+.comp-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.comp-stat-icon {
+    font-size: 1.4rem;
+}
+
+.comp-stat-val {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.comp-stat-label {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.completion-next {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    margin-bottom: 24px;
+}
+
+.btn-completion-close {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan));
+    color: white;
+    border-radius: var(--radius-lg);
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(124, 58, 237, 0.3);
+    transition: all var(--transition-fast);
+}
+
+.btn-completion-close:hover {
+    transform: translateY(-2px);
+}

@@ -1,0 +1,52 @@
+{
+  "name": "logic-looper",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "npx concurrently \"npm run server:dev\" \"vite\"",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "server": "tsx server/index.ts",
+    "server:dev": "tsx watch server/index.ts",
+    "db:generate": "prisma generate",
+    "db:push": "prisma db push",
+    "db:migrate": "prisma migrate dev",
+    "db:studio": "prisma studio",
+    "lint": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.3",
+    "@types/jsonwebtoken": "^9.0.9",
+    "@types/node": "^22.15.3",
+    "@vitejs/plugin-react": "^4.3.4",
+    "prisma": "^6.4.1",
+    "tsx": "^4.19.4",
+    "typescript": "~5.9.3",
+    "vite": "^7.3.1"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.4.1",
+    "@reduxjs/toolkit": "^2.11.2",
+    "@types/react": "^19.1.8",
+    "@types/react-dom": "^19.1.6",
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dayjs": "^1.11.19",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "framer-motion": "^12.35.1",
+    "idb": "^8.0.2",
+    "jsonwebtoken": "^9.0.2",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "react-redux": "^9.2.0",
+    "react-router-dom": "^7.13.1",
+    "recharts": "^3.8.0",
+    "redux": "^5.0.1",
+    "socket.io": "^4.8.3",
+    "socket.io-client": "^4.8.3"
+  }
+}
