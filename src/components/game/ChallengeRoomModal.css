@@ -1,0 +1,388 @@
+/* ─── Challenge Room Modal ───────────────────────────────────── */
+.crm-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(12px);
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+}
+
+.crm-card {
+    background: var(--bg-card);
+    backdrop-filter: blur(32px) saturate(200%);
+    border: 1px solid var(--border-glass);
+    border-radius: var(--radius-xl);
+    width: 100%;
+    max-width: 480px;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.6), var(--shadow-purple);
+    overflow: hidden;
+    position: relative;
+}
+
+.crm-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--gradient-hero);
+}
+
+/* ─── Header ─────────────────────────────────────────────────── */
+.crm-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 20px 22px;
+    border-bottom: 1px solid var(--border-subtle);
+}
+
+.crm-header-icon {
+    font-size: 2rem;
+    animation: float 3s ease-in-out infinite;
+}
+
+.crm-title {
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin: 0;
+    letter-spacing: -0.02em;
+}
+
+.crm-sub {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    margin: 2px 0 0;
+}
+
+.crm-close {
+    margin-left: auto;
+    background: rgba(255,255,255,0.06);
+    color: var(--text-muted);
+    border: 1px solid var(--border-subtle);
+    width: 32px; height: 32px;
+    border-radius: var(--radius-sm);
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+}
+.crm-close:hover { background: rgba(239,68,68,0.15); color: #EF4444; border-color: rgba(239,68,68,0.3); }
+
+/* ─── Tabs ───────────────────────────────────────────────────── */
+.crm-tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid var(--border-subtle);
+}
+
+.crm-tab {
+    flex: 1;
+    padding: 13px;
+    background: transparent;
+    color: var(--text-muted);
+    font-size: 0.875rem;
+    font-weight: 700;
+    cursor: pointer;
+    border: none;
+    border-bottom: 2px solid transparent;
+    transition: all var(--transition-fast);
+    font-family: var(--font-body);
+}
+.crm-tab:hover { color: var(--text-primary); background: rgba(255,255,255,0.03); }
+.crm-tab.active {
+    color: var(--accent-purple-light);
+    border-bottom-color: var(--accent-purple);
+    background: rgba(139,92,246,0.06);
+}
+
+/* ─── Body ───────────────────────────────────────────────────── */
+.crm-body {
+    padding: 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.crm-section-label {
+    font-size: 0.72rem;
+    font-weight: 800;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin: 0;
+}
+
+/* ─── Level cards ────────────────────────────────────────────── */
+.crm-levels {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.crm-level-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    padding: 14px 12px;
+    background: rgba(255,255,255,0.04);
+    border: 2px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    text-align: left;
+    transition: all var(--transition-bounce);
+    font-family: var(--font-body);
+}
+.crm-level-card:hover {
+    border-color: rgba(139,92,246,0.4);
+    background: rgba(139,92,246,0.07);
+}
+.crm-level-card.selected {
+    border-color: var(--accent-purple);
+    background: rgba(139,92,246,0.14);
+    box-shadow: 0 0 16px var(--accent-purple-glow);
+}
+
+.crml-emoji { font-size: 1.5rem; line-height: 1; }
+.crml-name {
+    font-size: 0.88rem;
+    font-weight: 800;
+    color: var(--text-primary);
+}
+.crml-desc {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    line-height: 1.4;
+}
+.crml-check {
+    position: absolute;
+    top: 8px; right: 10px;
+    font-size: 0.75rem;
+    color: var(--accent-purple-light);
+    font-weight: 900;
+}
+
+/* ─── Primary button ─────────────────────────────────────────── */
+.crm-btn-primary {
+    width: 100%;
+    padding: 15px;
+    background: var(--gradient-hero);
+    color: white;
+    border-radius: var(--radius-lg);
+    font-size: 1rem;
+    font-weight: 800;
+    cursor: pointer;
+    border: 1px solid rgba(255,255,255,0.1);
+    box-shadow: 0 6px 24px var(--accent-purple-glow);
+    transition: all var(--transition-bounce);
+    font-family: var(--font-body);
+    position: relative;
+    overflow: hidden;
+}
+.crm-btn-primary::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.12) 0%, transparent 50%);
+    opacity: 0;
+    transition: opacity var(--transition-fast);
+    pointer-events: none;
+}
+.crm-btn-primary:hover::after { opacity: 1; }
+.crm-btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 36px var(--accent-purple-glow);
+}
+.crm-btn-primary:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* ─── 5-letter code input boxes ─────────────────────────────── */
+.crm-code-input-row {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin: 4px 0;
+}
+
+.crm-code-box {
+    width: 54px; height: 64px;
+    background: rgba(255,255,255,0.04);
+    border: 2px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.8rem;
+    font-weight: 900;
+    font-family: var(--font-mono);
+    color: var(--text-primary);
+    transition: all var(--transition-fast);
+    user-select: none;
+    letter-spacing: 0;
+}
+.crm-code-box.filled {
+    border-color: var(--accent-purple);
+    background: rgba(139,92,246,0.12);
+    color: var(--accent-purple-light);
+}
+.crm-code-box.cursor {
+    border-color: var(--accent-cyan);
+    box-shadow: 0 0 0 3px var(--accent-cyan-glow);
+    animation: glow-pulse 1s ease-in-out infinite;
+}
+
+/* Hidden actual text input (covers the boxes area) */
+.crm-hidden-input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+}
+
+/* Tap to focus prompt */
+.crm-tap-to-type {
+    background: transparent;
+    border: 1px dashed var(--border-subtle);
+    color: var(--text-muted);
+    border-radius: var(--radius-md);
+    padding: 8px;
+    font-size: 0.78rem;
+    cursor: pointer;
+    width: 100%;
+    transition: all var(--transition-fast);
+    font-family: var(--font-body);
+}
+.crm-tap-to-type:hover {
+    border-color: var(--accent-purple);
+    color: var(--accent-purple-light);
+    background: rgba(139,92,246,0.06);
+}
+
+.crm-error {
+    font-size: 0.82rem;
+    color: #EF4444;
+    font-weight: 600;
+    padding: 8px 12px;
+    background: rgba(239,68,68,0.08);
+    border-radius: var(--radius-md);
+    border: 1px solid rgba(239,68,68,0.2);
+    margin: 0;
+}
+
+.crm-hint-note {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    text-align: center;
+    line-height: 1.5;
+    margin: 0;
+}
+
+/* ─── Code display (waiting state) ──────────────────────────── */
+.crm-room-code-display {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 20px;
+    background: rgba(139,92,246,0.06);
+    border: 1px solid rgba(139,92,246,0.25);
+    border-radius: var(--radius-xl);
+}
+
+.crm-code-label {
+    font-size: 0.72rem;
+    font-weight: 800;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+.crm-code-value {
+    font-size: 2.8rem;
+    font-weight: 900;
+    font-family: var(--font-mono);
+    letter-spacing: 0.3em;
+    background: var(--gradient-hero);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.crm-code-share-row {
+    display: flex;
+    gap: 8px;
+    width: 100%;
+}
+
+.crm-share-input {
+    flex: 1;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    padding: 10px 12px;
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+    font-family: var(--font-mono);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    cursor: text;
+}
+.crm-share-input:focus { outline: none; border-color: var(--accent-purple); }
+
+.crm-copy-btn {
+    padding: 10px 16px;
+    background: rgba(6,182,212,0.12);
+    color: var(--accent-cyan);
+    border: 1px solid rgba(6,182,212,0.35);
+    border-radius: var(--radius-md);
+    font-size: 0.82rem;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all var(--transition-bounce);
+    font-family: var(--font-body);
+}
+.crm-copy-btn.copied {
+    background: rgba(16,185,129,0.12);
+    color: var(--accent-green);
+    border-color: rgba(16,185,129,0.35);
+}
+.crm-copy-btn:hover { transform: scale(1.05); }
+
+/* ─── Waiting pulse animation ────────────────────────────────── */
+.crm-waiting-dots {
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+}
+.crm-dot {
+    width: 8px; height: 8px;
+    background: var(--accent-purple);
+    border-radius: 50%;
+    animation: bounce 1.2s ease-in-out infinite;
+}
+.crm-dot:nth-child(2) { animation-delay: 0.2s; background: var(--accent-cyan); }
+.crm-dot:nth-child(3) { animation-delay: 0.4s; background: var(--accent-pink); }
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); opacity: 0.5; }
+    50%       { transform: translateY(-8px); opacity: 1; }
+}
+
+@media (max-width: 400px) {
+    .crm-levels { grid-template-columns: 1fr; }
+    .crm-code-box { width: 46px; height: 56px; font-size: 1.5rem; }
+    .crm-code-value { font-size: 2rem; letter-spacing: 0.2em; }
+}

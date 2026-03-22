@@ -5,8 +5,6 @@ import { logout } from '../../store/authSlice';
 import { togglePanel } from '../../store/notificationSlice';
 import { auth } from '../../lib/apiClient';
 import dayjs from 'dayjs';
-import { getDailyPuzzleConfig } from '../../lib/puzzleEngine';
-import { formatDateLocal } from '../../lib/db';
 import NotificationPanel from './NotificationPanel';
 import './Topbar.css';
 
@@ -19,7 +17,7 @@ const Topbar: React.FC<TopbarProps> = ({ onMenuToggle }) => {
     const analytics = useSelector((s: RootState) => s.analytics);
     const { user } = useSelector((s: RootState) => s.auth);
     const { items: notifications } = useSelector((s: RootState) => s.notifications);
-    const [copied, setCopied] = React.useState(false);
+    const [_copied, _setCopied] = React.useState(false); // kept for future use
 
     const today = dayjs().format('dddd, MMMM D, YYYY');
     const unreadCount = notifications.filter(n => !n.read).length;
@@ -28,24 +26,9 @@ const Topbar: React.FC<TopbarProps> = ({ onMenuToggle }) => {
         ? user.name.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase()
         : 'G';
 
-    // Friend Challenge — share today's puzzle seed via URL
-    const handleShare = async () => {
-        const date = formatDateLocal(new Date());
-        const config = getDailyPuzzleConfig(date);
-        const shareUrl = `${window.location.origin}?puzzle=${date}&seed=${config.seed}&type=${config.type}`;
-        try {
-            if (navigator.share) {
-                await navigator.share({
-                    title: `Logic Looper — ${today}`,
-                    text: `Can you solve today's ${config.type} puzzle? 🧩`,
-                    url: shareUrl,
-                });
-            } else {
-                await navigator.clipboard.writeText(shareUrl);
-                setCopied(true);
-                setTimeout(() => setCopied(false), 2000);
-            }
-        } catch { /* user cancelled */ }
+    // Challenge Friend — opens the ChallengeRoomModal in GameView
+    const handleShare = () => {
+        window.dispatchEvent(new CustomEvent('ll:open-challenge'));
     };
 
     return (
@@ -62,9 +45,9 @@ const Topbar: React.FC<TopbarProps> = ({ onMenuToggle }) => {
             </div>
 
             <div className="topbar-right">
-                {/* Friend Challenge Share Button */}
-                <button className="share-btn" onClick={handleShare} title="Share today's puzzle with a friend">
-                    {copied ? '✅ Copied!' : '🔗 Challenge Friend'}
+                {/* Challenge Friend button — opens room modal */}
+                <button className="share-btn" onClick={handleShare} title="Challenge a friend with a 5-letter room code">
+                    ⚔️ Challenge Friend
                 </button>
 
                 <div className="topbar-stat">

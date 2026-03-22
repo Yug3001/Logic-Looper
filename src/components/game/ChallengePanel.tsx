@@ -26,12 +26,15 @@ import './ChallengePanel.css';
 interface Props {
     puzzleType: string;
     difficulty: number;
+    joinCode?: string;          // If provided, auto-join this room on mount
     onChallengeStart: (roomId: string) => void;
     onChallengeEnd: () => void;
     /** Called by parent GameView to report progress */
     onRegisterProgressEmitter: (fn: (progress: number, hintsUsed: number, timeTaken: number) => void) => void;
     /** Called by parent GameView to report completion */
     onRegisterCompleteEmitter: (fn: (score: number, timeTaken: number, hintsUsed: number, correct: boolean) => void) => void;
+    /** Called by GameView to register an external join trigger */
+    onRegisterJoinTrigger?: (fn: (code: string) => void) => void;
 }
 
 type PanelState = 'idle' | 'waiting' | 'active' | 'finished';
@@ -49,10 +52,12 @@ const DIFF_LABEL = ['Easy', 'Medium', 'Hard', 'Expert'];
 const ChallengePanel: React.FC<Props> = ({
     puzzleType,
     difficulty,
+    joinCode,
     onChallengeStart,
     onChallengeEnd,
     onRegisterProgressEmitter,
     onRegisterCompleteEmitter,
+    onRegisterJoinTrigger,
 }) => {
     const dispatch = useDispatch<AppDispatch>();
     const { user } = useSelector((s: RootState) => s.auth);
@@ -211,14 +216,30 @@ const ChallengePanel: React.FC<Props> = ({
         }
     }, [user, today, puzzleType, difficulty, onChallengeStart, startTimer, panelState]);
 
+    // ── Auto-join from joinCode prop (set by modal) ──────────────────────────
+    useEffect(() => {
+        if (joinCode && user && panelState === 'idle') {
+            joinRoom(joinCode);
+        }
+    }, [joinCode, user]); // eslint-disable-line react-hooks/exhaustive-deps
+
+    // ── Register external join trigger for GameView → modal ──────────────────
+    useEffect(() => {
+        if (onRegisterJoinTrigger) {
+            onRegisterJoinTrigger((code: string) => {
+                joinRoom(code);
+            });
+        }
+    }, [onRegisterJoinTrigger, joinRoom]);
+
     // ── Auto-join from URL ─────────────────────────────────────────────────────
 
     useEffect(() => {
         const parsed = parseChallengeUrl();
-        if (parsed && user && panelState === 'idle') {
+        if (parsed && user && panelState === 'idle' && !joinCode) {
             joinRoom(parsed.roomId);
         }
-    }, [user]);
+    }, [user]); // eslint-disable-line react-hooks/exhaustive-deps
 
     // ── Create new challenge ───────────────────────────────────────────────────
 
@@ -281,7 +302,7 @@ const ChallengePanel: React.FC<Props> = ({
                 </motion.div>
             )}
 
-            {/* ── WAITING: Share link ── */}
+            {/* ── WAITING: Show 5-letter code + share link ── */}
             {panelState === 'waiting' && (
                 <motion.div
                     className="cp-waiting"
@@ -294,7 +315,32 @@ const ChallengePanel: React.FC<Props> = ({
                         <span className="cp-pulse-dot" />
                     </div>
                     <h3>Waiting for Opponent…</h3>
-                    <p>Share this link with your friend:</p>
+
+                    {/* Big code display */}
+                    <div style={{
+                        background: 'rgba(139,92,246,0.08)',
+                        border: '1px solid rgba(139,92,246,0.25)',
+                        borderRadius: 'var(--radius-xl)',
+                        padding: '16px 20px',
+                        textAlign: 'center',
+                    }}>
+                        <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 6 }}>
+                            Room Code — Share with your friend
+                        </div>
+                        <div style={{
+                            fontSize: '2.8rem',
+                            fontWeight: 900,
+                            fontFamily: 'var(--font-mono)',
+                            letterSpacing: '0.35em',
+                            background: 'var(--gradient-hero)',
+                            WebkitBackgroundClip: 'text',
+                            WebkitTextFillColor: 'transparent',
+                        }}>
+                            {roomId}
+                        </div>
+                    </div>
+
+                    <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', margin: 0 }}>or share the link:</p>
                     <div className="cp-share-box">
                         <input
                             className="cp-share-input"
@@ -310,7 +356,6 @@ const ChallengePanel: React.FC<Props> = ({
                             {copySuccess ? '✓ Copied!' : '📋 Copy'}
                         </motion.button>
                     </div>
-                    <div className="cp-room-id">Room: <code>{roomId}</code></div>
                     <button className="cp-exit-btn" onClick={handleExit}>Cancel</button>
                 </motion.div>
             )}

@@ -3,12 +3,14 @@
 .daily-unlock-strip {
     display: flex;
     align-items: center;
-    gap: 20px;
+    gap: 16px;
     background: var(--bg-card);
-    border: 1px solid var(--border-subtle);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--border-glass);
     border-radius: var(--radius-xl);
-    padding: 16px 20px;
+    padding: 14px 16px;
     overflow: hidden;
+    box-shadow: var(--shadow-card);
 }
 
 /* ─── Streak box ─────────────────────────────────────────────────────────── */

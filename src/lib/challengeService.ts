@@ -154,9 +154,16 @@ export function destroyChallengeService() {
 
 // ─── Room ID Helpers ──────────────────────────────────────────────────────────
 
-/** Generate a new random challenge room ID */
+/** Generate a new random 5-letter room code (easy to say/remember) */
 export function generateRoomId(): string {
-    return Math.random().toString(36).slice(2, 8).toUpperCase();
+    const consonants = 'BCDFGHJKLMNPQRSTVWXYZ';
+    const vowels = 'AEIOU';
+    let code = '';
+    for (let i = 0; i < 5; i++) {
+        const pool = i % 2 === 0 ? consonants : vowels;
+        code += pool[Math.floor(Math.random() * pool.length)];
+    }
+    return code;
 }
 
 /** Build a shareable challenge URL */

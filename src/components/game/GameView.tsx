@@ -38,6 +38,8 @@ import PuzzleTimer from './PuzzleTimer';
 import CompletionModal from './CompletionModal';
 import ChallengePanel from './ChallengePanel';
 import DailyUnlockStrip from './DailyUnlockStrip';
+import ChallengeRoomModal, { CHALLENGE_LEVELS, ChallengeLevel } from './ChallengeRoomModal';
+import { generateRoomId } from '../../lib/challengeService';
 import './GameView.css';
 
 const DAILY_HINTS = 3;
@@ -114,8 +116,12 @@ const GameView: React.FC = () => {
 
     // ── Challenge state ────────────────────────────────────────────────────────
     const [challengeActive, setChallengeActive] = useState(false);
+    const [showChallengeModal, setShowChallengeModal] = useState(false);
+    const [pendingRoomCode, setPendingRoomCode] = useState<string>('');
+    const [pendingLevel, setPendingLevel] = useState<ChallengeLevel | null>(null);
     const progressEmitterRef = useRef<((p: number, h: number, t: number) => void) | null>(null);
     const completeEmitterRef = useRef<((s: number, t: number, h: number, c: boolean) => void) | null>(null);
+    const challengePanelJoinRef = useRef<((code: string, level?: ChallengeLevel) => void) | null>(null);
 
     // ── Validate device date (anti-cheat) ─────────────────────────────────────
     useEffect(() => {
@@ -182,10 +188,22 @@ const GameView: React.FC = () => {
         }
     }, [alreadySolved, todayActivity]);
 
-    // ── Check URL for challenge params on mount ───────────────────────────────
+    // ── Check URL for challenge code → auto-open join modal ─────────────────
     useEffect(() => {
         const params = new URLSearchParams(window.location.search);
-        if (params.get('challenge')) setChallengeActive(true);
+        const code = params.get('challenge');
+        if (code && code.length === 5) {
+            setPendingRoomCode(code.toUpperCase());
+            setShowChallengeModal(true);
+        }
+
+        // Listen for topbar "Challenge Friend" button
+        const onOpenChallenge = () => {
+            setPendingRoomCode('');
+            setShowChallengeModal(true);
+        };
+        window.addEventListener('ll:open-challenge', onOpenChallenge);
+        return () => window.removeEventListener('ll:open-challenge', onOpenChallenge);
     }, []);
 
     // ── Emit live progress to ChallengePanel ──────────────────────────────────
@@ -317,16 +335,22 @@ const GameView: React.FC = () => {
                         onTick={setTimeTaken}
                         initialValue={alreadySolved ? todayActivity?.timeTaken ?? 0 : timeTaken}
                     />
-                    {/* Challenge toggle button */}
+                    {/* Challenge toggle button — opens modal */}
                     {!alreadySolved && (
                         <motion.button
                             className={`btn-challenge-toggle ${challengeActive ? 'active' : ''}`}
-                            onClick={() => setChallengeActive(v => !v)}
+                            onClick={() => {
+                                if (challengeActive) {
+                                    setChallengeActive(false);
+                                } else {
+                                    setShowChallengeModal(true);
+                                }
+                            }}
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
-                            title="Challenge a friend"
+                            title={challengeActive ? 'Exit challenge' : 'Challenge a friend — 5-letter code'}
                         >
-                            ⚔️
+                            {challengeActive ? '✕' : '⚔️'}
                         </motion.button>
                     )}
                 </div>
@@ -442,12 +466,14 @@ const GameView: React.FC = () => {
                             transition={{ type: 'spring', stiffness: 200, damping: 25 }}
                         >
                             <ChallengePanel
-                                puzzleType={config.type}
-                                difficulty={config.difficulty}
+                                puzzleType={pendingLevel?.type ?? config.type}
+                                difficulty={pendingLevel?.difficulty ?? config.difficulty}
+                                joinCode={pendingRoomCode || undefined}
                                 onChallengeStart={() => { }}
-                                onChallengeEnd={() => setChallengeActive(false)}
+                                onChallengeEnd={() => { setChallengeActive(false); setPendingRoomCode(''); setPendingLevel(null); }}
                                 onRegisterProgressEmitter={(fn) => { progressEmitterRef.current = fn; }}
                                 onRegisterCompleteEmitter={(fn) => { completeEmitterRef.current = fn; }}
+                                onRegisterJoinTrigger={(fn) => { challengePanelJoinRef.current = fn; }}
                             />
                         </motion.div>
                     )}
@@ -464,6 +490,38 @@ const GameView: React.FC = () => {
                         hintsUsed={hintsUsed}
                         puzzleType={config.type}
                         onClose={() => setShowCompletion(false)}
+                    />
+                )}
+            </AnimatePresence>
+
+            {/* Challenge Room Modal — 5-letter code entry */}
+            <AnimatePresence>
+                {showChallengeModal && (
+                    <ChallengeRoomModal
+                        initialCode={pendingRoomCode}
+                        isGuest={pendingRoomCode.length === 5}
+                        onCreateRoom={(code, level) => {
+                            setPendingLevel(level);
+                            setPendingRoomCode(code);
+                            setShowChallengeModal(false);
+                            setChallengeActive(true);
+                            // Write code in URL so friend can join
+                            const url = new URL(window.location.href);
+                            url.searchParams.set('challenge', code);
+                            window.history.replaceState({}, '', url.toString());
+                            // Tell ChallengePanel to join
+                            challengePanelJoinRef.current?.(code, level);
+                        }}
+                        onJoinRoom={(code) => {
+                            setPendingRoomCode(code);
+                            setShowChallengeModal(false);
+                            setChallengeActive(true);
+                            const url = new URL(window.location.href);
+                            url.searchParams.set('challenge', code);
+                            window.history.replaceState({}, '', url.toString());
+                            challengePanelJoinRef.current?.(code);
+                        }}
+                        onClose={() => setShowChallengeModal(false)}
                     />
                 )}
             </AnimatePresence>

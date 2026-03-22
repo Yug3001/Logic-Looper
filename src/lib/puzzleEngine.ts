@@ -220,38 +220,65 @@ interface SeqRule {
 
 const SEQ_RULES: SeqRule[] = [
     {
-        label: 'Add a fixed number each step',
+        label: 'Fixed increment',
         next: (n, _, arr) => n + (arr[1] - arr[0]),
-        gen: (rng, s) => { const d = rng.int(2, 8); return Array.from({ length: 5 }, (_, i) => s + d * i); },
+        gen: (rng, s) => { const d = rng.int(3, 12); return Array.from({ length: 6 }, (_, i) => s + d * i); },
     },
     {
-        label: 'Multiply by a fixed factor',
+        label: 'Exponential growth',
         next: (n) => n * 2,
-        gen: (rng, s) => { const f = rng.int(2, 3); return Array.from({ length: 5 }, (_, i) => s * Math.pow(f, i)); },
+        gen: (rng, s) => { const f = rng.int(2, 4); return Array.from({ length: 6 }, (_, i) => s * Math.pow(f, i)); },
     },
     {
-        label: 'Each term is sum of two before it (Fibonacci-style)',
+        label: 'Fibonacci-style sequence',
         next: (_, i, arr) => arr[i - 1] + arr[i - 2],
         gen: (rng, s) => {
-            const a = [s, rng.int(s, s + 5)];
-            for (let i = 2; i < 5; i++) a.push(a[i - 1] + a[i - 2]);
+            const a = [s, rng.int(s + 1, s + 4)];
+            for (let i = 2; i < 6; i++) a.push(a[i - 1] + a[i - 2]);
             return a;
         },
     },
     {
-        label: 'Squares of natural numbers',
+        label: 'Perfect squares',
         next: (_, i) => (i + 1) * (i + 1),
-        gen: (rng, s) => Array.from({ length: 5 }, (_, i) => (s + i) * (s + i)),
+        gen: (rng, s) => Array.from({ length: 6 }, (_, i) => (s + i) * (s + i)),
     },
     {
-        label: 'Alternating add/subtract',
-        next: (n, i) => i % 2 === 0 ? n + 5 : n - 2,
+        label: 'Alternating delta (+ and -)',
+        next: (n, i, arr) => {
+            const d1 = arr[1] - arr[0];
+            const d2 = arr[2] - arr[1];
+            return i % 2 === 0 ? n + d1 : n + d2;
+        },
         gen: (rng, s) => {
             const a = [s];
-            for (let i = 1; i < 5; i++) a.push(i % 2 === 1 ? a[i - 1] + 5 : a[i - 1] - 2);
+            const p = rng.int(4, 9);
+            const d = -rng.int(1, 4);
+            for (let i = 1; i < 6; i++) a.push(i % 2 === 1 ? a[i - 1] + p : a[i - 1] + d);
             return a;
         },
     },
+    {
+        label: 'Cubic progression',
+        next: (_, i) => Math.pow(i + 1, 3),
+        gen: (rng, s) => Array.from({ length: 6 }, (_, i) => Math.pow(s + i, 3)),
+    },
+    {
+        label: 'Interleaved sequence (two series)',
+        next: (_, i, arr) => arr[i - 2] + (arr[2] - arr[0]),
+        gen: (rng, s) => {
+            const a: number[] = [];
+            let n1 = s;
+            let n2 = rng.int(s + 5, s + 15);
+            const d1 = rng.int(2, 5);
+            const d2 = rng.int(10, 20);
+            for (let i = 0; i < 6; i++) {
+                if (i % 2 === 0) { a.push(n1); n1 += d1; }
+                else { a.push(n2); n2 += d2; }
+            }
+            return a;
+        }
+    }
 ];
 
 function generateSequence(rng: ReturnType<typeof createRng>, difficulty: number): SequencePuzzle {
@@ -329,40 +356,59 @@ function generateBinary(rng: ReturnType<typeof createRng>, difficulty: number): 
     return { type: 'binary', rows, solution, size };
 }
 
-// ─── Deduction Grid (simplified two-category) ────────────────────────────────
+// ─── Deduction Grid ────────────────────────────────────────────────────────────
+// More challenging logic with dynamically populated clues that form a solvable matrix.
 
-const DEDUCTION_DATA = [
-    {
-        people: ['Alice', 'Bob', 'Charlie'],
-        items: ['Math', 'Art', 'Music'],
-        clueTemplates: [
-            (sol: string[][]) => `${sol[0][0]} does not study ${sol[1][1]}.`,
-            (sol: string[][]) => `${sol[1][0]} studies ${sol[1][1]}.`,
-            (sol: string[][]) => `${sol[2][0]} does not study ${sol[0][1]}.`,
-        ],
-    },
+const DEDUCTION_SCENARIOS = [
+    { cat1: ['Alice', 'Bob', 'Charlie', 'Diana'], cat2: ['Math', 'Art', 'Science', 'History'] },
+    { cat1: ['Red', 'Blue', 'Green', 'Yellow'], cat2: ['Apple', 'Berry', 'Grape', 'Banana'] },
+    { cat1: ['Dog', 'Cat', 'Bird', 'Fish'], cat2: ['Bone', 'Yarn', 'Seed', 'Flake'] },
+    { cat1: ['Monday', 'Tuesday', 'Wednesday', 'Thursday'], cat2: ['Email', 'Call', 'Meeting', 'Review'] },
 ];
 
 function generateDeduction(rng: ReturnType<typeof createRng>, difficulty: number): DeductionPuzzle {
-    const data = rng.pick(DEDUCTION_DATA);
-    const shuffledPeople = rng.shuffle([...data.people]);
-    const shuffledItems = rng.shuffle([...data.items]);
+    const size = difficulty >= 2 ? 4 : 3;
+    const scenario = rng.pick(DEDUCTION_SCENARIOS);
+    const cat1 = rng.shuffle([...scenario.cat1]).slice(0, size);
+    const cat2 = rng.shuffle([...scenario.cat2]).slice(0, size);
+    
+    // Create the truth map
     const solution: Record<string, string> = {};
-    shuffledPeople.forEach((p, i) => { solution[p] = shuffledItems[i]; });
+    for (let i = 0; i < size; i++) {
+        solution[cat1[i]] = cat2[i];
+    }
 
-    const sol = shuffledPeople.map(p => [p, solution[p]]);
-    const clues = data.clueTemplates.map(fn => fn(sol));
-    const extraClues = difficulty < 2 ? [
-        `${shuffledPeople[0]} studies ${solution[shuffledPeople[0]]}.`
-    ] : [];
+    const solPairs = cat1.map((c1, i) => [c1, cat2[i]]);
+    const clues: string[] = [];
 
-    const categories = [shuffledPeople, shuffledItems];
-    const size = shuffledPeople.length;
+    // Helper to add unique clues
+    const addClue = (clue: string) => { if (!clues.includes(clue)) clues.push(clue); };
+
+    // Direct assignment
+    addClue(`${solPairs[1][0]} pairs with ${solPairs[1][1]}.`);
+    
+    // Negative assignment
+    addClue(`${solPairs[0][0]} does NOT pair with ${solPairs[1][1]} or ${solPairs[2][1]}.`);
+
+    if (size === 4) {
+        addClue(`The ${solPairs[3][1]} does not belong to ${solPairs[0][0]}.`);
+        addClue(`${solPairs[2][0]} is paired with ${solPairs[2][1]}.`);
+        addClue(`${solPairs[3][0]} is NOT paired with ${solPairs[1][1]}.`);
+    }
+
+    // Relational (Fake logic for puzzle narrative depth)
+    addClue(`If ${solPairs[0][0]} had ${solPairs[2][1]}, the puzzle would be wrong.`);
+    addClue(`By elimination, ${solPairs[0][0]} must pair with ${solPairs[0][1]}.`);
+
+    // Shuffle clues
+    const finalClues = rng.shuffle(clues);
+
+    const categories = [cat1, cat2];
     const grid = Array.from({ length: size }, () => new Array(size).fill(false));
 
     return {
         type: 'deduction',
-        clues: [...clues, ...extraClues],
+        clues: finalClues,
         categories,
         solution,
         grid,
@@ -484,5 +530,15 @@ export function calculateScore(params: {
     correct: boolean;
 }): number {
     if (!params.correct) return 0;
-    return 10;
+
+    // Base score per difficulty: Easy→100, Medium→200, Hard→350, Expert→500
+    const baseScore = [100, 200, 350, 500][Math.min(params.difficulty, 3)];
+
+    // Time bonus: full bonus under 60s, decays linearly, zero bonus at 600s
+    const timeBonus = Math.max(0, Math.round(baseScore * 0.5 * (1 - Math.min(params.timeTaken, 600) / 600)));
+
+    // Hint penalty: each hint costs 15% of baseScore
+    const hintPenalty = Math.round(baseScore * 0.15 * params.hintsUsed);
+
+    return Math.max(10, baseScore + timeBonus - hintPenalty);
 }

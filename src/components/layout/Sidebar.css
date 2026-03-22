@@ -1,17 +1,53 @@
+/* ─── Sidebar (Mobile-First) ────────────────────────────────── */
 .sidebar {
     position: fixed;
     left: 0;
     top: 0;
     bottom: 0;
-    background: var(--bg-secondary);
-    border-right: 1px solid var(--border-subtle);
+    background: var(--bg-glass);
+    backdrop-filter: blur(32px) saturate(200%);
+    -webkit-backdrop-filter: blur(32px) saturate(200%);
+    border-right: 1px solid var(--border-glass);
     display: flex;
     flex-direction: column;
     z-index: 50;
     overflow: hidden;
+    box-shadow: 4px 0 40px rgba(0,0,0,0.4);
 }
 
-/* Logo */
+/* Mobile: completely hidden by default, slides in when .open */
+@media (max-width: 767px) {
+    .sidebar {
+        width: 280px !important;
+        transform: translateX(-100%);
+        transition: transform var(--transition-bounce) !important;
+    }
+    .sidebar.open {
+        transform: translateX(0);
+        box-shadow: 8px 0 48px rgba(0,0,0,0.6);
+    }
+}
+
+/* Desktop: width is controlled by framer-motion */
+@media (min-width: 768px) {
+    .sidebar {
+        transform: none !important;
+    }
+}
+
+/* Sidebar ambient glow */
+.sidebar::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 200px;
+    background: radial-gradient(ellipse 100% 80% at 50% 0%, rgba(139,92,246,0.12) 0%, transparent 70%);
+    pointer-events: none;
+}
+
+/* ─── Logo ──────────────────────────────────────────────────── */
 .sidebar-logo {
     display: flex;
     align-items: center;
@@ -20,28 +56,28 @@
     cursor: pointer;
     border-bottom: 1px solid var(--border-subtle);
     min-height: 72px;
+    transition: background var(--transition-fast);
 }
+.sidebar-logo:hover { background: rgba(139,92,246,0.06); }
 
 .logo-icon {
     width: 40px;
     height: 40px;
-    background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan));
+    background: var(--gradient-hero);
     border-radius: var(--radius-md);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 22px;
+    font-size: 20px;
     font-weight: 900;
     color: white;
     flex-shrink: 0;
-    box-shadow: 0 4px 16px var(--accent-purple-glow);
+    box-shadow: var(--shadow-purple);
+    position: relative;
+    animation: neon-flicker 8s ease-in-out infinite;
 }
 
-.logo-text {
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-}
+.logo-text { display: flex; flex-direction: column; overflow: hidden; }
 
 .logo-name {
     font-size: 16px;
@@ -51,37 +87,35 @@
     -webkit-text-fill-color: transparent;
     background-clip: text;
     white-space: nowrap;
+    letter-spacing: -0.02em;
 }
 
 .logo-sub {
-    font-size: 11px;
+    font-size: 10px;
     color: var(--text-muted);
-    letter-spacing: 0.05em;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
+    margin-top: 1px;
 }
 
-/* Streak Banner */
+/* ─── Streak Banner ─────────────────────────────────────────── */
 .sidebar-streak {
     display: flex;
     align-items: center;
     gap: 10px;
-    padding: 14px 16px;
-    background: linear-gradient(90deg, rgba(245, 158, 11, 0.12), rgba(236, 72, 153, 0.08));
+    padding: 12px 16px;
+    background: linear-gradient(90deg, rgba(245,158,11,0.1), rgba(236,72,153,0.07));
     border-bottom: 1px solid var(--border-subtle);
-    min-height: 56px;
+    min-height: 52px;
 }
 
 .streak-flame {
-    font-size: 22px;
+    font-size: 20px;
     animation: streak-flame 1.5s ease-in-out infinite;
     flex-shrink: 0;
 }
 
-.streak-info {
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-}
+.streak-info { display: flex; flex-direction: column; overflow: hidden; }
 
 .streak-count {
     font-size: 20px;
@@ -94,19 +128,21 @@
 }
 
 .streak-label {
-    font-size: 11px;
+    font-size: 9px;
     color: var(--text-muted);
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.1em;
+    margin-top: 1px;
 }
 
-/* Nav */
+/* ─── Nav ───────────────────────────────────────────────────── */
 .sidebar-nav {
     flex: 1;
     display: flex;
     flex-direction: column;
-    padding: 12px 8px;
-    gap: 4px;
+    padding: 10px 8px;
+    gap: 2px;
+    overflow-y: auto;
 }
 
 .nav-item {
@@ -116,7 +152,7 @@
     padding: 11px 12px;
     border-radius: var(--radius-md);
     background: transparent;
-    color: var(--text-secondary);
+    color: var(--text-muted);
     font-size: 14px;
     font-weight: 500;
     transition: all var(--transition-fast);
@@ -129,38 +165,38 @@
 }
 
 .nav-item:hover {
-    background: var(--bg-card-hover);
+    background: rgba(255,255,255,0.05);
     color: var(--text-primary);
     border-color: var(--border-subtle);
 }
 
 .nav-item.active {
-    background: rgba(124, 58, 237, 0.15);
+    background: rgba(139,92,246,0.15);
     color: var(--accent-purple-light);
-    border-color: rgba(124, 58, 237, 0.25);
+    border-color: rgba(139,92,246,0.25);
+}
+.nav-item.active:hover {
+    background: rgba(139,92,246,0.2);
 }
 
 .nav-icon {
-    font-size: 20px;
+    font-size: 18px;
     flex-shrink: 0;
-    width: 24px;
+    width: 22px;
     text-align: center;
 }
 
-.nav-label {
-    flex: 1;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
+.nav-label { flex: 1; overflow: hidden; text-overflow: ellipsis; }
 
 .nav-badge {
     background: var(--accent-pink);
     color: white;
-    font-size: 10px;
+    font-size: 9px;
     font-weight: 700;
-    padding: 2px 6px;
+    padding: 2px 5px;
     border-radius: var(--radius-full);
     flex-shrink: 0;
+    animation: pulse-ring 2s ease-out infinite;
 }
 
 .nav-active-indicator {
@@ -170,76 +206,66 @@
     transform: translateY(-50%);
     width: 3px;
     height: 60%;
-    background: var(--accent-purple-light);
-    border-radius: 3px 0 0 3px;
+    background: var(--gradient-hero);
+    border-radius: 4px 0 0 4px;
 }
 
-/* User */
+/* ─── User ──────────────────────────────────────────────────── */
 .sidebar-user {
     display: flex;
     align-items: center;
     gap: 10px;
-    padding: 14px 16px;
+    padding: 12px 16px;
     border-top: 1px solid var(--border-subtle);
-    min-height: 68px;
+    min-height: 64px;
+    background: rgba(0,0,0,0.1);
 }
 
 .user-avatar {
-    width: 38px;
-    height: 38px;
-    background: linear-gradient(135deg, var(--accent-purple), var(--accent-cyan));
+    width: 36px;
+    height: 36px;
+    background: var(--gradient-hero);
     border-radius: var(--radius-full);
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 13px;
-    font-weight: 700;
+    font-weight: 800;
     color: white;
     flex-shrink: 0;
+    box-shadow: 0 0 0 2px var(--accent-purple-glow);
 }
 
-.user-info {
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-}
+.user-info { display: flex; flex-direction: column; overflow: hidden; flex: 1; }
 
 .user-name {
     font-size: 13px;
-    font-weight: 600;
+    font-weight: 700;
     color: var(--text-primary);
     white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .user-rank {
     font-size: 11px;
     color: var(--accent-yellow);
-    font-weight: 500;
-}
-
-@media (max-width: 768px) {
-    .sidebar {
-        transform: translateX(-100%);
-    }
-
-    .sidebar.open {
-        transform: translateX(0);
-        box-shadow: 4px 0 32px rgba(0, 0, 0, 0.5);
-    }
+    font-weight: 600;
+    margin-top: 1px;
 }
 
 .logout-btn {
     margin-left: auto;
     background: none;
     color: var(--text-muted);
-    font-size: 1.1rem;
-    padding: 4px 8px;
+    font-size: 1rem;
+    padding: 6px 8px;
     border-radius: var(--radius-sm);
     cursor: pointer;
     transition: color var(--transition-fast), background var(--transition-fast);
+    flex-shrink: 0;
 }
-
 .logout-btn:hover {
     color: #EF4444;
-    background: rgba(239, 68, 68, 0.1);
+    background: rgba(239,68,68,0.12);
 }
