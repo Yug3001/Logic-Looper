@@ -278,6 +278,37 @@ const SEQ_RULES: SeqRule[] = [
             }
             return a;
         }
+    },
+    {
+        label: 'Prime-shifted sequence',
+        next: (n, i) => n + [2, 3, 5, 7, 11, 13, 17, 19, 23][i],
+        gen: (rng, s) => {
+            const primes = [2, 3, 5, 7, 11, 13, 17, 19, 23];
+            const a = [s];
+            for (let i = 0; i < 5; i++) a.push(a[i] + primes[i]);
+            return a;
+        }
+    },
+    {
+        label: 'Alternating multiplication scaling',
+        next: (n, i) => n * (i % 2 === 0 ? 2 : 3),
+        gen: (rng, s) => {
+            const a = [s];
+            const f1 = rng.int(2, 3);
+            const f2 = rng.int(4, 5);
+            for (let i = 0; i < 5; i++) a.push(a[i] * (i % 2 === 0 ? f1 : f2));
+            return a;
+        }
+    },
+    {
+        label: 'Growing difference cascade',
+        next: (n, i) => n + i * i,
+        gen: (rng, s) => {
+            const a = [s];
+            const base = rng.int(2, 5);
+            for (let i = 1; i < 6; i++) a.push(a[i - 1] + i * base);
+            return a;
+        }
     }
 ];
 
@@ -289,8 +320,9 @@ function generateSequence(rng: ReturnType<typeof createRng>, difficulty: number)
     const answer = seq[seq.length - 1];
     const visible = seq.slice(0, 4 + difficulty > 5 ? 4 : 4);
 
-    // Wrong options
-    const offsets = rng.shuffle([-7, -5, -3, 3, 5, 7, 9, -9, 2, -2]);
+    // Generate wrong options that carefully mirror standard human error
+    const variance = ruleIdx > 6 ? 12 : 5;
+    const offsets = rng.shuffle([-variance, -(variance-2), -3, 3, (variance-2), variance, 9, -9, 2, -2]);
     const options = rng.shuffle([answer, ...offsets.slice(0, 3).map(o => answer + o)]);
 
     return { type: 'sequence', sequence: seq.slice(0, seq.length - 1), answer, options, rule: rule.label };
@@ -308,22 +340,45 @@ const PATTERN_SETS = [
 
 function generatePattern(rng: ReturnType<typeof createRng>, difficulty: number): PatternPuzzle {
     const symbolSet = rng.pick(PATTERN_SETS);
-    const patternLen = 2 + difficulty;
-    const pattern = Array.from({ length: patternLen }, () => rng.pick(symbolSet));
-    const repeats = 2;
+    // Determine deep logic mode depending on difficulty (0 = repeating, 1 = expanding, 2 = palindromic mirror)
+    const mode = difficulty >= 2 ? rng.int(0, 2) : 0;
+    
+    let sequence: string[] = [];
+    let answer = '';
+    let rule = '';
 
-    const sequence = [];
-    for (let i = 0; i < repeats; i++) sequence.push(...pattern);
-    // Add partial next repeat
-    sequence.push(...pattern.slice(0, difficulty + 1));
+    if (mode === 0) {
+        const patternLen = 2 + difficulty;
+        const pattern = Array.from({ length: patternLen }, () => rng.pick(symbolSet));
+        for (let i = 0; i < 2; i++) sequence.push(...pattern);
+        sequence.push(...pattern.slice(0, difficulty + 1));
+        answer = pattern[(difficulty + 1) % patternLen];
+        rule = `Cyclic pattern repeating every ${patternLen} items`;
+    } else if (mode === 1) {
+        const A = rng.pick(symbolSet);
+        const B = rng.pick(symbolSet.filter(s => s !== A));
+        let cur = 1;
+        for (let i = 0; i < 4; i++) {
+            sequence.push(A);
+            for (let j = 0; j < cur; j++) sequence.push(B);
+            cur++;
+        }
+        answer = sequence.pop()!;
+        rule = `Expanding sequence cluster (+1 secondary item each loop)`;
+    } else {
+        const base = Array.from({ length: 3 }, () => rng.pick(symbolSet));
+        const palindrome = [...base, ...[...base].reverse()];
+        sequence = [...palindrome, ...palindrome.slice(0, 4)];
+        answer = palindrome[4];
+        rule = `Mirrored palindromic sequence`;
+    }
 
-    const answer = pattern[(difficulty + 1) % patternLen];
     const options = rng.shuffle([
         answer,
         ...rng.shuffle(symbolSet.filter(s => s !== answer)).slice(0, 3),
     ]);
 
-    return { type: 'pattern', items: sequence, answer, options, rule: `Pattern repeats every ${patternLen} items` };
+    return { type: 'pattern', items: sequence, answer, options, rule };
 }
 
 // ─── Binary (Binairo) ────────────────────────────────────────────────────────
@@ -372,7 +427,6 @@ function generateDeduction(rng: ReturnType<typeof createRng>, difficulty: number
     const cat1 = rng.shuffle([...scenario.cat1]).slice(0, size);
     const cat2 = rng.shuffle([...scenario.cat2]).slice(0, size);
     
-    // Create the truth map
     const solution: Record<string, string> = {};
     for (let i = 0; i < size; i++) {
         solution[cat1[i]] = cat2[i];
@@ -381,38 +435,26 @@ function generateDeduction(rng: ReturnType<typeof createRng>, difficulty: number
     const solPairs = cat1.map((c1, i) => [c1, cat2[i]]);
     const clues: string[] = [];
 
-    // Helper to add unique clues
     const addClue = (clue: string) => { if (!clues.includes(clue)) clues.push(clue); };
 
-    // Direct assignment
-    addClue(`${solPairs[1][0]} pairs with ${solPairs[1][1]}.`);
-    
-    // Negative assignment
-    addClue(`${solPairs[0][0]} does NOT pair with ${solPairs[1][1]} or ${solPairs[2][1]}.`);
-
-    if (size === 4) {
-        addClue(`The ${solPairs[3][1]} does not belong to ${solPairs[0][0]}.`);
-        addClue(`${solPairs[2][0]} is paired with ${solPairs[2][1]}.`);
-        addClue(`${solPairs[3][0]} is NOT paired with ${solPairs[1][1]}.`);
+    // Deep associative logic
+    if (difficulty >= 2) {
+        addClue(`Neither ${solPairs[0][0]} nor ${solPairs[1][0]} is paired with ${solPairs[2][1]}.`);
+        addClue(`The one paired with ${solPairs[1][1]} is not ${solPairs[0][0]}.`);
+        addClue(`${solPairs[2][0]} is strictly paired with ${solPairs[2][1]}.`);
+        addClue(`If you asked ${solPairs[3][0]}, they would say they don't have ${solPairs[1][1]} or ${solPairs[0][1]}.`);
+        addClue(`By process of elimination involving ${solPairs[1][0]}, they must have ${solPairs[1][1]}.`);
+    } else {
+        addClue(`${solPairs[1][0]} pairs with ${solPairs[1][1]}.`);
+        addClue(`${solPairs[0][0]} does NOT pair with ${solPairs[1][1]} or ${solPairs[2][1]}.`);
+        addClue(`Therefore, ${solPairs[0][0]} must logically pair with ${solPairs[0][1]}.`);
     }
 
-    // Relational (Fake logic for puzzle narrative depth)
-    addClue(`If ${solPairs[0][0]} had ${solPairs[2][1]}, the puzzle would be wrong.`);
-    addClue(`By elimination, ${solPairs[0][0]} must pair with ${solPairs[0][1]}.`);
-
-    // Shuffle clues
     const finalClues = rng.shuffle(clues);
-
     const categories = [cat1, cat2];
     const grid = Array.from({ length: size }, () => new Array(size).fill(false));
 
-    return {
-        type: 'deduction',
-        clues: finalClues,
-        categories,
-        solution,
-        grid,
-    };
+    return { type: 'deduction', clues: finalClues, categories, solution, grid };
 }
 
 // ─── Validate Puzzle ──────────────────────────────────────────────────────────
