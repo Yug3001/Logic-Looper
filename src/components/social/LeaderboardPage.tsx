@@ -251,10 +251,10 @@ const LeaderboardPage: React.FC = () => {
                             <div className="lb-row lb-header">
                                 <span>Rank</span>
                                 <span>Player</span>
-                                <span>Points</span>
-                                <span>Streak</span>
-                                <span>Solved</span>
-                                <span></span>
+                                <span className="lb-score-header">Points</span>
+                                <span className="lb-streak">Streak</span>
+                                <span className="lb-solved">Solved</span>
+                                <span className="lb-country"></span>
                             </div>
                             {globalData.map((e, i) => (
                                 <motion.div
@@ -296,17 +296,17 @@ const LeaderboardPage: React.FC = () => {
                             <span className="lb-daily-count">{dailyData.length} solvers today</span>
                         </div>
                         <div className="lb-table">
-                            <div className="lb-row lb-header">
+                            <div className="lb-row lb-row-daily lb-header">
                                 <span>Rank</span>
                                 <span>Player</span>
-                                <span>Score</span>
-                                <span>Time</span>
-                                <span></span>
+                                <span className="lb-score-header">Score</span>
+                                <span className="lb-streak">Streak</span>
+                                <span className="lb-country"></span>
                             </div>
                             {dailyData.map((e, i) => (
                                 <motion.div
                                     key={e.userId}
-                                    className={`lb-row ${e.isMe ? 'lb-row-you' : ''}`}
+                                    className={`lb-row lb-row-daily ${e.isMe ? 'lb-row-you' : ''}`}
                                     initial={{ opacity: 0, x: -10 }}
                                     animate={{ opacity: 1, x: 0 }}
                                     transition={{ delay: i * 0.05 }}

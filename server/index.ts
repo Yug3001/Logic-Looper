@@ -7,6 +7,8 @@ import { createServer } from 'http';
 import { Server as SocketServer } from 'socket.io';
 import express from 'express';
 import cors from 'cors';
+import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
 
 import authRouter from './routes/auth';
 import scoresRouter from './routes/scores';
@@ -16,6 +18,18 @@ import { attachChallengeSocket } from './routes/challenge';
 const app = express();
 
 // ─── Middleware ───────────────────────────────────────────────────────────────
+
+app.use(helmet({ crossOriginResourcePolicy: false }));
+
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 300, // limit each IP to 300 requests per windowMs
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Too many requests, please try again later.' }
+});
+
+app.use(limiter);
 
 const corsOptions = {
   origin:

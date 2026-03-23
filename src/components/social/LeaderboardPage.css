@@ -159,7 +159,7 @@
     background: rgba(255, 255, 255, 0.03);
     border: 1px solid rgba(255, 255, 255, 0.07);
     border-radius: 18px;
-    overflow: hidden;
+    overflow-x: auto;
 }
 
 /* Podium */
@@ -190,7 +190,6 @@
 /* 2nd */
 .podium-slot.pos-1 {
     padding-bottom: 28px;
-    order: 2;
 }
 
 /* 1st – tallest */
@@ -258,6 +257,11 @@
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     transition: background 0.15s;
     gap: 8px;
+    min-width: max-content;
+}
+
+.lb-row-daily {
+    grid-template-columns: 56px 1fr 100px 80px 44px;
 }
 
 .lb-row:last-child {
@@ -1069,12 +1073,32 @@
 
     .lb-row {
         grid-template-columns: 44px 1fr 80px;
+        min-width: 0;
+    }
+
+    .lb-row-daily {
+        grid-template-columns: 44px 1fr 80px;
+    }
+
+    .lb-tabs {
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+    }
+
+    .lb-tabs::-webkit-scrollbar {
+        display: none;
+    }
+
+    .lb-tab {
+        flex: 0 0 auto;
     }
 
     .lb-streak,
     .lb-solved,
     .lb-country {
-        display: none;
+        display: none !important;
     }
 
     .lb-live-stats {
