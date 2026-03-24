@@ -55,6 +55,7 @@ export interface UserProfile {
     email: string | null;
     name: string | null;
     avatar: string | null;
+    phone?: string | null;
     isGuest?: boolean;
     streakCount: number;
     totalPoints: number;

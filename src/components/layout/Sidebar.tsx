@@ -116,7 +116,13 @@ const Sidebar: React.FC<SidebarProps> = ({ currentTab, onTabChange, isOpen, onTo
                             exit={{ opacity: 0 }}
                         >
                             <span className="user-name">{displayName}</span>
-                            <span className="user-rank">{isGuest ? 'Guest Mode' : `${user?.totalPoints?.toLocaleString() ?? 0} pts`}</span>
+                            {(user as any)?.phone ? (
+                                <span className="user-rank" style={{ color: '#00bb4b', fontSize: '11px' }}>
+                                    📲 +91 {(user as any).phone.slice(0, 5)} {(user as any).phone.slice(5)}
+                                </span>
+                            ) : (
+                                <span className="user-rank">{isGuest ? 'Guest Mode' : `${user?.totalPoints?.toLocaleString() ?? 0} pts`}</span>
+                            )}
                         </motion.div>
                     )}
                 </AnimatePresence>

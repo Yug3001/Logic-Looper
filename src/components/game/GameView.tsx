@@ -12,6 +12,8 @@
  */
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../store/store';
 import {
     getDailyPuzzleConfigAsync,
     getDailyPuzzleConfig,
@@ -78,6 +80,10 @@ function calcProgress(puzzle: AnyPuzzle, answer: any): number {
 
 const GameView: React.FC = () => {
     const today = formatDateLocal(new Date());
+    const { user } = useSelector((s: RootState) => s.auth);
+
+    // Derive first name from user's display name
+    const firstName = user?.name ? user.name.trim().split(' ')[0] : null;
 
     // ── Async SHA-256 config ──────────────────────────────────────────────────
     const [config, setConfig] = useState<PuzzleConfig>(() => getDailyPuzzleConfig(today));
@@ -296,6 +302,19 @@ const GameView: React.FC = () => {
                     animate={{ opacity: 1, y: 0 }}
                 >
                     ⚠️ {dateWarning}
+                </motion.div>
+            )}
+
+            {/* ── Welcome Banner ── */}
+            {firstName && (
+                <motion.div
+                    className="welcome-banner"
+                    initial={{ opacity: 0, y: -12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4, ease: 'easeOut' }}
+                >
+                    <span className="welcome-wave">👋</span>
+                    <span className="welcome-text">Welcome, <strong>{firstName}</strong>!</span>
                 </motion.div>
             )}
 

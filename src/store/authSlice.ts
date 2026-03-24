@@ -120,6 +120,12 @@ const authSlice = createSlice({
             state.token = null;
             state.isGuest = false;
             setToken(null);
+            // Clear all local session data
+            localStorage.removeItem('ll_guest_id');
+            localStorage.removeItem('ll_guest_name');
+            localStorage.removeItem('ll_tc_id');
+            localStorage.removeItem('ll_tc_name');
+            localStorage.removeItem('ll_tc_phone');
         },
         clearError(state) {
             state.error = null;

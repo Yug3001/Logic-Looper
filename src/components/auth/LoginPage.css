@@ -362,3 +362,129 @@
 }
 .btn-truecaller:disabled { opacity: 0.55; cursor: not-allowed; }
 .truecaller-icon { font-size: 18px; }
+
+/* ─── Truecaller Info Modal ──────────────────────────────────── */
+.tc-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    padding: 16px;
+}
+
+.tc-modal {
+    background: var(--bg-card);
+    border: 1px solid var(--border-glass);
+    border-radius: var(--radius-xl);
+    width: 100%;
+    max-width: 420px;
+    box-shadow: 0 24px 64px rgba(0,0,0,0.5), 0 0 0 1px rgba(0,187,75,0.15);
+    overflow: hidden;
+    position: relative;
+}
+
+.tc-modal::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #00bb4b, #00e069, #00bb4b);
+}
+
+.tc-modal-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 24px 24px 0;
+}
+
+.tc-modal-icon {
+    font-size: 36px;
+    flex-shrink: 0;
+    animation: float 3s ease-in-out infinite;
+}
+
+.tc-modal-header h3 {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin: 0 0 2px;
+}
+
+.tc-modal-header p {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin: 0;
+}
+
+.tc-modal-body {
+    padding: 20px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.tc-phone-row {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.tc-phone-row:focus-within {
+    border-color: #00bb4b;
+    box-shadow: 0 0 0 3px rgba(0,187,75,0.18);
+}
+
+.tc-country-code {
+    padding: 12px 14px;
+    background: rgba(0,187,75,0.07);
+    color: #00bb4b;
+    font-weight: 700;
+    font-size: 14px;
+    white-space: nowrap;
+    border-right: 1px solid var(--border-subtle);
+    flex-shrink: 0;
+}
+
+.tc-phone-row input {
+    flex: 1;
+    padding: 12px 14px;
+    background: rgba(255,255,255,0.04);
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    font-size: 15px;
+}
+
+.tc-phone-row input::placeholder { color: var(--text-muted); }
+.tc-phone-row input:focus { outline: none; }
+
+.tc-modal-footer {
+    display: flex;
+    gap: 12px;
+    padding: 0 24px 24px;
+}
+
+.tc-modal-footer .btn-secondary {
+    width: auto;
+    flex: 1;
+    padding: 12px;
+}
+
+.tc-modal-footer .btn-truecaller {
+    flex: 2;
+    padding: 12px;
+    background: rgba(0,187,75,0.14);
+    border-color: rgba(0,187,75,0.45);
+}

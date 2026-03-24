@@ -6,6 +6,7 @@ import {
     loginAsGuest, loginWithEmail, registerWithEmail, clearError,
     loginWithGoogle as loginWithGoogleAction,
 } from '../../store/authSlice';
+import { setToken } from '../../lib/apiClient';
 import './LoginPage.css';
 
 declare global {
@@ -20,19 +21,6 @@ type Mode = 'menu' | 'login' | 'register';
 /** Google OAuth 2.0 client-id — put yours in .env as VITE_GOOGLE_CLIENT_ID */
 const GOOGLE_CLIENT_ID = (import.meta as any).env?.VITE_GOOGLE_CLIENT_ID as string;
 
-/**
- * Truecaller SDK: Opens the Truecaller app-link (works on mobile with app installed)
- * On desktop or if app not installed, falls back to phone-number login notice.
- */
-function openTruecallerAuth(callbackUrl: string) {
-    const truecallerUrl =
-        `truecallersdk://truesdk/web_verify?type=btmsheet&requestNonce=${Date.now()}` +
-        `&partnerKey=LOGIC_LOOPER&partnerName=Logic+Looper&lang=en` +
-        `&privacyUrl=https://logiclooper.app/privacy&termsUrl=https://logiclooper.app/terms` +
-        `&callbackUrl=${encodeURIComponent(callbackUrl)}`;
-    window.location.href = truecallerUrl;
-}
-
 const LoginPage: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
     const { isLoading, error } = useSelector((s: RootState) => s.auth);
@@ -45,7 +33,13 @@ const LoginPage: React.FC = () => {
     const [username, setUsername] = useState('');
     const [localError, setLocalError] = useState<string | null>(null);
     const [successMsg, setSuccessMsg] = useState<string | null>(null);
-    const [truecallerPending, setTruecallerPending] = useState(false);
+
+    // Truecaller modal states
+    const [showTruecallerModal, setShowTruecallerModal] = useState(false);
+    const [tcName, setTcName] = useState('');
+    const [tcPhone, setTcPhone] = useState('');
+    const [tcError, setTcError] = useState<string | null>(null);
+    const [tcLoading, setTcLoading] = useState(false);
 
     // ── Google One-Tap / GSI initialization ────────────────────────────────────
     useEffect(() => {
@@ -103,31 +97,56 @@ const LoginPage: React.FC = () => {
 
     // ── Truecaller ─────────────────────────────────────────────────────────────
     const handleTruecaller = () => {
-        setTruecallerPending(true);
-        const callbackUrl = `${window.location.origin}/auth/truecaller-callback`;
-        
-        // Attempt deep link
-        openTruecallerAuth(callbackUrl);
-        
-        // Fallback for Desktop/Presentation: fake Truecaller auth success after 2.5s
-        setTimeout(() => {
-            setTruecallerPending(false);
-            const tcId = `tc_${Date.now()}`;
-            localStorage.setItem('ll_guest_id', tcId);
-            localStorage.setItem('ll_guest_name', 'Truecaller User');
-            dispatch({ type: 'auth/loginAsGuest/fulfilled', payload: {
-                token: `local_guest_${tcId}`,
+        setLocalError(null);
+        setTcName('');
+        setTcPhone('');
+        setTcError(null);
+        setShowTruecallerModal(true);
+    };
+
+    const handleTruecallerSubmit = () => {
+        const name = tcName.trim();
+        const phone = tcPhone.trim();
+
+        if (!name) { setTcError('Please enter your full name.'); return; }
+        if (!/^[6-9]\d{9}$/.test(phone)) {
+            setTcError('Enter a valid 10-digit Indian mobile number.');
+            return;
+        }
+
+        setTcLoading(true);
+        setTcError(null);
+
+        const tcId = `tc_${Date.now()}`;
+        const token = `truecaller_${tcId}`;
+
+        // Persist so App.tsx can restore on reload
+        localStorage.setItem('ll_token', token);
+        localStorage.setItem('ll_tc_id', tcId);
+        localStorage.setItem('ll_tc_name', name);
+        localStorage.setItem('ll_tc_phone', phone);
+
+        setToken(token);
+
+        dispatch({
+            type: 'auth/loginWithGoogle/fulfilled',   // reuse non-guest fulfilled branch
+            payload: {
+                token,
                 user: {
                     id: tcId,
                     email: null,
-                    name: 'Truecaller User',
+                    name,
                     avatar: null,
+                    phone,
                     isGuest: false,
                     streakCount: 0,
                     totalPoints: 0,
                 },
-            }});
-        }, 2500);
+            },
+        });
+
+        setTcLoading(false);
+        setShowTruecallerModal(false);
     };
 
     // ── Guest (fully offline — no server call needed) ──────────────────────────
@@ -215,6 +234,79 @@ const LoginPage: React.FC = () => {
 
     return (
         <div className="login-page">
+            {/* ── Truecaller Modal ──────────────────────────────────────────── */}
+            <AnimatePresence>
+                {showTruecallerModal && (
+                    <motion.div
+                        className="tc-modal-overlay"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        onClick={() => setShowTruecallerModal(false)}
+                    >
+                        <motion.div
+                            className="tc-modal"
+                            initial={{ scale: 0.85, opacity: 0, y: 30 }}
+                            animate={{ scale: 1, opacity: 1, y: 0 }}
+                            exit={{ scale: 0.85, opacity: 0, y: 30 }}
+                            transition={{ type: 'spring', stiffness: 260, damping: 22 }}
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            <div className="tc-modal-header">
+                                <span className="tc-modal-icon">📲</span>
+                                <div>
+                                    <h3>Continue with Truecaller</h3>
+                                    <p>Enter your registered Truecaller details</p>
+                                </div>
+                            </div>
+
+                            <div className="tc-modal-body">
+                                <div className="form-group">
+                                    <label>Full Name</label>
+                                    <input
+                                        type="text"
+                                        placeholder="e.g. Yug Patel"
+                                        value={tcName}
+                                        onChange={(e) => setTcName(e.target.value)}
+                                        disabled={tcLoading}
+                                        autoFocus
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label>Mobile Number</label>
+                                    <div className="tc-phone-row">
+                                        <span className="tc-country-code">🇮🇳 +91</span>
+                                        <input
+                                            type="tel"
+                                            placeholder="10-digit mobile number"
+                                            value={tcPhone}
+                                            onChange={(e) => setTcPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
+                                            disabled={tcLoading}
+                                            maxLength={10}
+                                        />
+                                    </div>
+                                </div>
+                                {tcError && <div className="login-error" style={{ marginTop: 4 }}>⚠️ {tcError}</div>}
+                            </div>
+
+                            <div className="tc-modal-footer">
+                                <button className="btn-secondary" onClick={() => setShowTruecallerModal(false)} disabled={tcLoading}>
+                                    Cancel
+                                </button>
+                                <motion.button
+                                    className="btn-truecaller"
+                                    onClick={handleTruecallerSubmit}
+                                    disabled={tcLoading}
+                                    whileHover={{ scale: 1.03 }}
+                                    whileTap={{ scale: 0.97 }}
+                                >
+                                    {tcLoading ? '⟳ Verifying…' : '✅ Verify & Continue'}
+                                </motion.button>
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
             <div className="login-bg">
                 <motion.div className="orb orb-1" animate={{ scale: [1, 1.2, 1], x: [0, 30, 0], y: [0, -20, 0] }} transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }} />
                 <motion.div className="orb orb-2" animate={{ scale: [1, 0.8, 1], x: [0, -40, 0], y: [0, 30, 0] }} transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut' }} />
@@ -275,12 +367,12 @@ const LoginPage: React.FC = () => {
                                 type="button"
                                 className="btn-truecaller"
                                 onClick={handleTruecaller}
-                                disabled={isLoading || truecallerPending}
+                                disabled={isLoading}
                                 whileHover={{ scale: 1.02 }}
                                 whileTap={{ scale: 0.98 }}
                             >
                                 <span className="truecaller-icon">📲</span>
-                                {truecallerPending ? 'Opening Truecaller App…' : 'Continue with Truecaller'}
+                                Continue with Truecaller
                             </motion.button>
 
                             <div className="login-divider"><span>or use email</span></div>

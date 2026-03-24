@@ -46,7 +46,7 @@ const App: React.FC = () => {
 
     useEffect(() => {
         const storedToken = getToken();
-        if (storedToken && !user) {
+        if (storedToken) {
             if (storedToken.startsWith('local_guest_')) {
                 const guestId = localStorage.getItem('ll_guest_id') || 'guest';
                 const guestName = localStorage.getItem('ll_guest_name') || 'Guest';
@@ -57,6 +57,22 @@ const App: React.FC = () => {
                         user: {
                             id: guestId, email: null, name: guestName,
                             avatar: null, isGuest: true, streakCount: 0, totalPoints: 0,
+                        },
+                    },
+                });
+                setAuthChecked(true);
+            } else if (storedToken.startsWith('truecaller_')) {
+                const tcId = localStorage.getItem('ll_tc_id') || storedToken;
+                const tcName = localStorage.getItem('ll_tc_name') || 'Truecaller User';
+                const tcPhone = localStorage.getItem('ll_tc_phone') || '';
+                dispatch({
+                    type: 'auth/loginWithGoogle/fulfilled',
+                    payload: {
+                        token: storedToken,
+                        user: {
+                            id: tcId, email: null, name: tcName,
+                            avatar: null, phone: tcPhone,
+                            isGuest: false, streakCount: 0, totalPoints: 0,
                         },
                     },
                 });

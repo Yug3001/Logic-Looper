@@ -732,3 +732,47 @@
     border-radius: var(--radius-md);
     font-weight: 600;
 }
+
+/* ─── Welcome Banner ─────────────────────────────────────────── */
+.welcome-banner {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 18px;
+    background: linear-gradient(135deg, rgba(139,92,246,0.1) 0%, rgba(236,72,153,0.07) 100%);
+    border: 1px solid rgba(139,92,246,0.22);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 2px 12px rgba(139,92,246,0.1);
+    animation: fade-in-up 0.4s ease-out;
+}
+
+.welcome-wave {
+    font-size: 1.4rem;
+    display: inline-block;
+    animation: wave 1.8s ease-in-out 1;
+    transform-origin: 70% 70%;
+}
+
+@keyframes wave {
+    0%,100% { transform: rotate(0deg); }
+    20%      { transform: rotate(-10deg); }
+    40%      { transform: rotate(12deg); }
+    60%      { transform: rotate(-10deg); }
+    80%      { transform: rotate(6deg); }
+}
+
+.welcome-text {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    font-weight: 600;
+    letter-spacing: 0.01em;
+}
+
+.welcome-text strong {
+    background: var(--gradient-hero);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 900;
+    font-size: 1rem;
+}
